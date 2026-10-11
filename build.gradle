@@ -33,7 +33,7 @@ ext {
   springCloudVersion          = "2025.1.1"
   lz4JavaVersion              = "1.11.4"
   awsSdkVersion               = "2.46.6"
-  parquetVersion              = "1.15.2"
+  parquetVersion              = "1.18.1"
   avroVersion                 = "1.12.0"
   jackson2Version             = "2.21.7"
   // jackson-annotations dropped patch versions from 2.20+ (BOM uses 2.21).
