@@ -79,19 +79,41 @@ dependencyManagement {
 
 ext['netty.version'] = nettyVersion
 ext['httpcore5.version'] = '5.4.3'
+// Spring Boot dependency-management properties (force alone was not enough for bootJar).
+ext['jackson-bom.version'] = jackson3Version
+ext['jackson-annotations.version'] = jackson2Version
 
 configurations.configureEach {
   resolutionStrategy {
     force(
       "org.apache.httpcomponents.core5:httpcore5:5.4.3",
       "org.apache.httpcomponents.core5:httpcore5-h2:5.4.3",
+      "com.fasterxml.jackson:jackson-bom:$jackson2Version",
       "com.fasterxml.jackson.core:jackson-core:$jackson2Version",
       "com.fasterxml.jackson.core:jackson-databind:$jackson2Version",
       "com.fasterxml.jackson.core:jackson-annotations:$jackson2Version",
+      "tools.jackson:jackson-bom:$jackson3Version",
       "tools.jackson.core:jackson-core:$jackson3Version",
       "tools.jackson.core:jackson-databind:$jackson3Version",
       "io.airlift:aircompressor:$aircompressorVersion",
     )
+    eachDependency { details ->
+      if (details.requested.group == 'com.fasterxml.jackson.core'
+          || details.requested.group == 'com.fasterxml.jackson.module'
+          || details.requested.group == 'com.fasterxml.jackson.datatype'
+          || details.requested.group == 'com.fasterxml.jackson.dataformat') {
+        details.useVersion jackson2Version
+        details.because 'Align Jackson 2.x for Trivy (CVE-2026-*).'
+      }
+      if (details.requested.group == 'tools.jackson.core'
+          || details.requested.group == 'tools.jackson.databind'
+          || details.requested.group == 'tools.jackson.module'
+          || details.requested.group == 'tools.jackson.datatype'
+          || details.requested.group == 'tools.jackson.dataformat') {
+        details.useVersion jackson3Version
+        details.because 'Align Jackson 3.x for Trivy (CVE-2026-*).'
+      }
+    }
   }
   resolutionStrategy.dependencySubstitution {
     substitute module("org.lz4:lz4-java") using module("at.yawk.lz4:lz4-java:$lz4JavaVersion") because "Trivy flagged CVE-2025-12183 and CVE-2025-66566 in lz4-java 1.8.0."
@@ -386,6 +408,8 @@ tasks.named("check").configure {
 
 bootBuildImage {
   builder = "paketobuildpacks/builder-jammy-base:0.4.659"
+  // Pull current jammy run image so libssl picks up Ubuntu security fixes (e.g. CVE-2026-84782).
+  runImage = "paketobuildpacks/run-jammy-base:latest"
   // https://github.com/paketo-buildpacks/builder-jammy-base/
 
   environment = [
