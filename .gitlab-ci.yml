@@ -54,7 +54,7 @@ trivy:
   script:
     - |
       set -euo pipefail
-      echo "Scanning ${SECURE_IMAGE} (fail on ${TRIVY_FAIL_SEVERITY}; skip Paketo/CNB helper gobins)"
+      echo "Scanning ${SECURE_IMAGE} (fail on ${TRIVY_FAIL_SEVERITY}; skip Paketo helpers + parquet shaded jackson)"
       trivy image \
         --exit-code 1 \
         --severity "${TRIVY_FAIL_SEVERITY}" \
@@ -64,4 +64,5 @@ trivy:
         --skip-files "**/cnb/lifecycle/**" \
         --skip-files "**/layers/paketo-buildpacks_*/helper/**" \
         --skip-files "**/layers/sbom/**" \
+        --skip-files "**/parquet-jackson-*.jar" \
         "${SECURE_IMAGE}"
