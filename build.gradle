@@ -416,6 +416,11 @@ bootBuildImage {
   builder = "paketobuildpacks/builder-jammy-base:0.4.659"
   // Pull current jammy run image so libssl picks up Ubuntu security fixes (e.g. CVE-2026-84782).
   runImage = "paketobuildpacks/run-jammy-base:latest"
+  // Prefer Corretto over BellSoft Liberica — Liberica is fetched from GitHub and fails in CI.
+  buildpacks = [
+    "docker.io/paketobuildpacks/amazon-corretto",
+    "docker.io/paketobuildpacks/java",
+  ]
   // https://github.com/paketo-buildpacks/builder-jammy-base/
 
   environment = [
