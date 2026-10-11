@@ -19,7 +19,7 @@ ext {
   snakeyamlVersion            = "2.6"
   postgresqlVersion           = "42.7.12"
   springBootVersion           = "4.0.7"
-  nettyVersion               = "4.2.16.Final"
+  nettyVersion               = "4.2.17.Final"
   mazeCommonsVersion          = "0.0.19"
   mazeDtosOhlcvdatasetsVersion   = "v0.0.5"
   protobufJavaVersion         = "4.35.0"
@@ -31,10 +31,13 @@ ext {
   mapStructSpringVersion      = "2.0.0"
   cloudEventsSpringVersion    = "5.0.0"
   springCloudVersion          = "2025.1.1"
-  lz4JavaVersion              = "1.11.0"
+  lz4JavaVersion              = "1.11.4"
   awsSdkVersion               = "2.46.6"
   parquetVersion              = "1.15.2"
   avroVersion                 = "1.12.0"
+  jackson2Version             = "2.21.7"
+  jackson3Version             = "3.1.7"
+  aircompressorVersion        = "2.0.3"
 }
 
 repositories {
@@ -82,6 +85,12 @@ configurations.configureEach {
     force(
       "org.apache.httpcomponents.core5:httpcore5:5.4.3",
       "org.apache.httpcomponents.core5:httpcore5-h2:5.4.3",
+      "com.fasterxml.jackson.core:jackson-core:$jackson2Version",
+      "com.fasterxml.jackson.core:jackson-databind:$jackson2Version",
+      "com.fasterxml.jackson.core:jackson-annotations:$jackson2Version",
+      "tools.jackson.core:jackson-core:$jackson3Version",
+      "tools.jackson.core:jackson-databind:$jackson3Version",
+      "io.airlift:aircompressor:$aircompressorVersion",
     )
   }
   resolutionStrategy.dependencySubstitution {
@@ -98,7 +107,22 @@ dependencies {
       because "Fix CVE-2026-54428 flagged by Trivy."
     }
     implementation("at.yawk.lz4:lz4-java:$lz4JavaVersion") {
-      because "Fix CVE-2025-12183 and CVE-2025-66566 flagged by the build scan."
+      because "Fix CVE-2025-12183, CVE-2025-66566, and CVE-2026-106451 flagged by Trivy."
+    }
+    implementation("com.fasterxml.jackson.core:jackson-core:$jackson2Version") {
+      because "Fix Jackson 2.x CVEs flagged by Trivy."
+    }
+    implementation("com.fasterxml.jackson.core:jackson-databind:$jackson2Version") {
+      because "Fix Jackson 2.x CVEs flagged by Trivy."
+    }
+    implementation("tools.jackson.core:jackson-core:$jackson3Version") {
+      because "Fix Jackson 3.x CVEs flagged by Trivy."
+    }
+    implementation("tools.jackson.core:jackson-databind:$jackson3Version") {
+      because "Fix Jackson 3.x CVEs flagged by Trivy."
+    }
+    implementation("io.airlift:aircompressor:$aircompressorVersion") {
+      because "Fix CVE-2025-67721 flagged by Trivy."
     }
   }
   // Maze Commons
@@ -361,7 +385,7 @@ tasks.named("check").configure {
 }
 
 bootBuildImage {
-  builder = "paketobuildpacks/builder-jammy-base:0.4.621"
+  builder = "paketobuildpacks/builder-jammy-base:0.4.659"
   // https://github.com/paketo-buildpacks/builder-jammy-base/
 
   environment = [
