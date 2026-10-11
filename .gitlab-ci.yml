@@ -26,8 +26,10 @@ include:
   - project: "data-platform/infrastructure-base"
     ref: "v0.1.48"
     file: "/ci/templates/release-approval.gitlab-ci.yml"
+  # Pin container-publish to registry re-login fix (infrastructure-base!67).
+  # Other templates stay on v0.1.48 until a coordinated bump.
   - project: "data-platform/infrastructure-base"
-    ref: "v0.1.48"
+    ref: "407afe6c817f1fef21825e884e47952b5a51f9b0"
     file: "/ci/templates/container-publish.gitlab-ci.yml"
     inputs:
       job_image: eclipse-temurin:21-jdk
