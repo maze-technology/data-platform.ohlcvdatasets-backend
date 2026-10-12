@@ -10,33 +10,32 @@
 # Gradle resolve uses GitLab group Maven (GITLAB_MAVEN_* group CI vars / CI_JOB_TOKEN).
 # SDKMAN runs when .sdkmanrc is present (use_sdkman default true in templates).
 
-stages: [test, build, secure]
+stages: [validate, test, build, secure, publish]
 
 include:
   - project: "data-platform/infrastructure-base"
-    ref: "v0.1.48"
+    ref: "v0.2.25"
     file: "/ci/templates/java-build.gitlab-ci.yml"
     inputs:
       job_image: eclipse-temurin:21-jdk
       use_sdkman: "true"
       build_script: "./gradlew test"
   - project: "data-platform/infrastructure-base"
-    ref: "v0.1.48"
+    ref: "v0.2.25"
     file: "/ci/templates/tag-release.gitlab-ci.yml"
   - project: "data-platform/infrastructure-base"
-    ref: "v0.1.48"
+    ref: "v0.2.25"
     file: "/ci/templates/release-approval.gitlab-ci.yml"
-  # Pin container-publish to registry re-login fix (infrastructure-base!67).
-  # Other templates stay on v0.1.48 until a coordinated bump.
+  # infrastructure-base v0.2.25: registry re-login before push; cosign/kyverno removed.
   - project: "data-platform/infrastructure-base"
-    ref: "407afe6c817f1fef21825e884e47952b5a51f9b0"
+    ref: "v0.2.25"
     file: "/ci/templates/container-publish.gitlab-ci.yml"
     inputs:
       job_image: eclipse-temurin:21-jdk
       use_sdkman: "true"
       build_script: "./gradlew bootBuildImage --imageName=${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA}"
   - project: "data-platform/infrastructure-base"
-    ref: "v0.1.48"
+    ref: "v0.2.25"
     file: "/ci/templates/container-secure.gitlab-ci.yml"
     inputs:
       image: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
