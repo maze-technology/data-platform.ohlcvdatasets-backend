@@ -20,7 +20,7 @@ ext {
   postgresqlVersion           = "42.7.12"
   springBootVersion           = "4.0.7"
   nettyVersion               = "4.2.17.Final"
-  mazeCommonsVersion          = "0.0.19"
+  mazeCommonsVersion          = "v0.0.22"
   mazeDtosOhlcvdatasetsVersion   = "v0.0.5"
   protobufJavaVersion         = "4.35.0"
   grpcSpringBootVersion       = "1.0.3"
