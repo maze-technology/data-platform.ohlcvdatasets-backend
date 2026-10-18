@@ -39,7 +39,9 @@ public class SealOhlcvDatasetService implements SealOhlcvDatasetUseCase {
 
     final List<OrderedOhlcvData> orderedData = loadOrderedOhlcvDataPort.findByDatasetId(datasetId);
     if (orderedData.isEmpty()) {
-      throw new IllegalStateException("cannot seal dataset without ordered OHLCV rows: " + datasetId);
+      throw new IllegalStateException(
+          "cannot seal dataset without ordered OHLCV rows: " + datasetId
+      );
     }
 
     final String storageKey = ohlcvDatasetStoragePort.storeDataset(dataset, orderedData);

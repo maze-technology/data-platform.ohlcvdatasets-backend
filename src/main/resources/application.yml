@@ -28,8 +28,28 @@ spring:
     enabled: true
   cache:
     enabled: false
+  cloud:
+    function:
+      definition: ohlcvDatasetsConsumer;archiveChunkConsumer
+    stream:
+      bindings:
+        ohlcvDatasetsConsumer-in-0:
+          destination: ${OHLCVDATASETS_SYNC_REQUEST_TOPIC:ohlcvdatasets.sync.request}
+          group: ohlcvdatasets
+        archiveChunkConsumer-in-0:
+          destination: ${OHLCVDATASETS_ARCHIVE_CHUNK_TOPIC:ohlcvdatasets.archive.chunk}
+          group: ohlcvdatasets
+      kafka:
+        binder:
+          brokers: ${KAFKA_BROKERS:localhost:9092}
 
 maze:
+  events:
+    enabled: true
+    source: urn:service:ohlcvdatasets
   storage:
     ohlcvdatasets:
       enabled: false
+  sync:
+    ohlcvs-fetch-request-topic: ${OHLCVS_FETCH_REQUEST_TOPIC:ohlcvs.fetch.request}
+    archive-markets: []
