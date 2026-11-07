@@ -35,10 +35,10 @@ spring:
       bindings:
         ohlcvDatasetsConsumer-in-0:
           destination: ${OHLCVDATASETS_SYNC_REQUEST_TOPIC:ohlcvdatasets.sync.request}
-          group: ohlcvdatasets
+          group: ohlcvdatasets-backend
         archiveChunkConsumer-in-0:
           destination: ${OHLCVDATASETS_ARCHIVE_CHUNK_TOPIC:ohlcvdatasets.archive.chunk}
-          group: ohlcvdatasets
+          group: ohlcvdatasets-backend
       kafka:
         binder:
           brokers: ${KAFKA_BROKERS:localhost:9092}
@@ -46,7 +46,7 @@ spring:
 maze:
   events:
     enabled: true
-    source: urn:service:ohlcvdatasets
+    source: urn:service:ohlcvdatasets-backend
   storage:
     ohlcvdatasets:
       enabled: false
