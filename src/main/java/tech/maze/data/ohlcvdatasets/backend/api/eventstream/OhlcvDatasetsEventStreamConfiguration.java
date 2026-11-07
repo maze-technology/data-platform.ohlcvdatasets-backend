@@ -1,6 +1,5 @@
 package tech.maze.data.ohlcvdatasets.backend.api.eventstream;
 
-import com.google.protobuf.Empty;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Value;
 import io.cloudevents.CloudEvent;
@@ -116,30 +115,14 @@ public class OhlcvDatasetsEventStreamConfiguration {
         log.error("Failed to fan-out OHLCV fetch for {}", market.getTicker());
       }
     }
-
-    sendReplyIfPresent(event, Empty.getDefaultInstance());
   }
 
   private void handleTrackRequest(CloudEvent event) {
     log.info("Received TrackRequest event with id {}", event.getId());
-    sendReplyIfPresent(event, Empty.getDefaultInstance());
   }
 
   private void handleUntrackRequest(CloudEvent event) {
     log.info("Received UntrackRequest event with id {}", event.getId());
-    sendReplyIfPresent(event, Empty.getDefaultInstance());
-  }
-
-  private void sendReplyIfPresent(CloudEvent event, com.google.protobuf.Message response) {
-    final String replyTo = eventSender.resolveReplyTo(event);
-    if (replyTo == null || replyTo.isBlank()) {
-      return;
-    }
-
-    final boolean sent = eventSender.send(replyTo, response);
-    if (!sent) {
-      log.error("Failed to dispatch response for event {}", event.getId());
-    }
   }
 
   private ArchiveChunk parseArchiveChunk(CloudEvent event) {
